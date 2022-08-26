@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"os"
-	)
-/* 
+)
+
+/*
 type Reader interface {
 	Read(p []byte) (n int, err error)
 }
@@ -14,19 +16,21 @@ type Writer interface {
 }
 */
 
-/*1*/type FooReader struct{}
+type FooReader struct{}
 
-/*2*/func (fooReader *FooReader) Read(b []byte) (int, error){
+func (fooReader *FooReader) Read(b []byte) (int, error) {
 	fmt.Print("in >")
-	return os.Stdin.Read(b)/*3*/
+	return os.Stdin.Read(b)
 }
 
-/*4*/type FooWriter struct{}
+type FooWriter struct{}
 
-/*5*/func (fooWriter *FooWriter) Write(b []byte) (int, error) {
+func (fooWriter *FooWriter) Write(b []byte) (int, error) {
 	fmt.Print("out> ")
-	return os.Stdout.Write(b)/*6*/
+	return os.Stdout.Write(b)
+}
 
+/*
 func main() {
 	var (
 		reader FooReader
@@ -34,17 +38,27 @@ func main() {
 	)
 
 	//Create buffer to hold input/output
-	/*7*/input := make([]byte, 4096)
+	input := make([]byte, 4096)
 
-	s,err := reader.Read(input)/*8*/
+	s, err := reader.Read(input)
 	if err != nil {
 		log.Fatalln("Unable to read data")
 	}
 	fmt.Printf("Read %d bytes from stdin\n", s)
 
-	s,err = writer.Write(input)/*9*/
+	s, err = writer.Write(input)
 	if err != nil {
 		log.Fatalln("Unable to write data")
 	}
 	fmt.Printf("Wrote %d bytes to stdout\n", s)
+}
+*/
+func main() {
+	var (
+		reader FooReader
+		writer FooWriter
+	)
+	if _, err := io.Copy(&writer, &reader); err != nil {
+		log.Fatalln("Unable to read/write data")
+	}
 }
