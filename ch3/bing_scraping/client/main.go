@@ -24,4 +24,16 @@ func handler(i int, s *goquery.Selection) {
         return
     }
 
-    cp,
+    cp, ap, err := metadata.NewProperties(r)
+    if err != nil {
+        return
+    }
+
+    log.Printf(
+            "%25s %25s - %s %s\n",
+            cp.Creator,
+            cp.LastModifiedBy,
+            ap.Application,
+            ap.GetMajorVersion())
+}
+
