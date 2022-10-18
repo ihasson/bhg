@@ -1,3 +1,18 @@
+package metadata
+
+import  (
+    "archive/zip"
+    "encoding/xml"
+    "strings"
+//	"bytes"
+//	"encoding/xml"
+//	"errors"
+//	"io/ioutil"
+//	"regexp"
+//	"strconv"
+)
+
+
 type OfficeCoreProperty struct {
     XMLName         xml.Name    `xml:"coreProperties"`
     Creator         string      `xml:"creator"`
@@ -16,7 +31,7 @@ var OfficeVersions = map[string]string{
     "15":"2013",
     "14":"2010",
     "12":"2007",
-    "11":"2003"
+    "11":"2003",
 }
 
 func (a *OfficeAppProperty) GetMajorVersion() string {
@@ -53,7 +68,7 @@ func NewProperties(r *zip.Reader) (*OfficeCoreProperty, *OfficeAppProperty, erro
     return &coreProps, &appProps, nil
 }
 
-func proces(f *zip.File, prop interface{}) error {
+func process(f *zip.File, prop interface{}) error {
     rc, err := f.Open()
     if err != nil {
         return err

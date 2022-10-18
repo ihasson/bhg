@@ -1,6 +1,18 @@
 package main
 
-import "fmt"
+import ( 
+    	"archive/zip"
+	"bytes"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"net/url"
+	"os"
+
+	"bing-scraping/metadata"
+	"github.com/PuerkitoBio/goquery"
+)
 
 func handler(i int, s *goquery.Selection) {
     url, ok := s.Find("a").Attr("href")
@@ -13,7 +25,7 @@ func handler(i int, s *goquery.Selection) {
     if err != nil {
         return
     }
-    buf, err := ioutil.ReadAll(re.Body)
+    buf, err := ioutil.ReadAll(res.Body)
     if err != nil {
         return
     }
@@ -37,3 +49,25 @@ func handler(i int, s *goquery.Selection) {
             ap.GetMajorVersion())
 }
 
+func main() {
+    if len(os.Args) !=3 {
+        log.Fatalln("Missing required argument. Usage: main.go domain ext")
+    }
+    domain := os.Args[1]
+    filetype := os.Args[2]
+
+    q := fmt.Sprintf(
+        "site:%s && filetype:%s && instreamset:(url title):%s",
+        domain,
+        filetype,
+        filetype)
+
+    search := fmt.Sprintf("http://www.bing.com/search?q=%s", url.QueryEscape(q))
+    doc, err := goquery.NewDocument(search)
+    if err != nil { 
+        log.Panicln(err)
+    }
+
+    s := "html bod div#b_content ol#b_results li.b_algo div.b_title h2"
+    doc.Find(s).Each(handler)
+}
